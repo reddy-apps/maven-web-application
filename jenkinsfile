@@ -1,0 +1,37 @@
+node
+{
+    def mavenHome = tool name: "maven3.6.2"
+    stage('checkoutcode')
+    {
+        git branch: 'development', credentialsId: '5af3c78e-5bad-4e28-bdbb-76de45a2dc04', url: 'https://github.com/reddy-apps/maven-web-application.git'
+
+     }
+ stage('Build')
+      {
+          sh "${mavenHome}/bin/mvn clean package "
+          }
+stage('ExecuteSonarQubeReport')
+ {
+ sh "${mavenHome}/bin/mvn sonar:sonar"
+ }
+ stage('UploadArtifactintoNexus')
+ {
+ sh "${mavenHome}/bin/mvn deploy"
+ }
+    stage('DeployAppIntoTomcatServer')
+ {
+     sshagent(['9f897be3-2821-42ff-b23b-9419100084c6']) {
+    sh "scp -o StrictHostKeyChecking=no target/maven-web-application.war ec2-user@52.66.151.4:/opt/tomcat9/webapps/"
+}
+}
+stage('sendemailnotification')
+{
+    emailext body: '''build-over scriptedway
+
+
+regards
+gsreddy''', subject: 'build-over scriptedway', to: 'sri.gopireddy46@gmail.com'
+
+}
+    
+}
