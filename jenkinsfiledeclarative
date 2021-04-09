@@ -1,0 +1,72 @@
+pipeline
+{
+
+agent any
+
+tools {
+ maven 'maven3.6.2'
+}
+ triggers{
+pollSCM('* * * * *')
+}
+options {
+    timestamps()
+    buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '5', daysToKeepStr: '', numToKeepStr: '5'))
+}
+stages{
+
+  stage('CheckOutCode')
+  {
+    steps{
+     
+        git branch: 'development', credentialsId: '5af3c78e-5bad-4e28-bdbb-76de45a2dc04', url: 'https://github.com/reddy-apps/maven-web-application.git'
+    	}
+  }
+  
+  stage('Build')
+  {
+   steps{
+   sh "mvn clean package"
+   }
+  }
+
+stage('ExecuteSonarqubeReport')
+  {
+    steps{
+	sh "mvn sonar:sonar"
+	}
+  }
+  
+  stage('UploadArtifactsintoNexus')
+  {
+    steps{
+	sh "mvn deploy"
+	}
+  }
+    stage('DeployAppIntoTomcatServer')
+  {
+    steps{sshagent(['9f897be3-2821-42ff-b23b-9419100084c6']){
+    sh "rm -rf /opt/tomcat9/webapps/maven-web-application.war"
+    sh "scp -o StrictHostKeyChecking=no target/maven-web-application.war ec2-user@52.66.151.4:/opt/tomcat9/webapps/"
+    }
+	}
+  }
+  
+}
+post{
+   success{
+emailext body: '''Build is over -declarationway
+
+regards
+--------
+gsreddy''', subject: 'Build is successfull -declarationway', to: 'sri.gopireddy46@gmail.com,gsreddymca1986@gmail.com'
+   }
+   failure{
+emailext body: '''Build is over -declarationway
+
+regards
+--------
+gsreddy''', subject: 'Build is failure -declarationway', to: 'sri.gopireddy46@gmail.com,gsreddymca1986@gmail.com'
+   }
+  }
+}
