@@ -1,7 +1,9 @@
 pipeline
 {
 
-agent {'node1instance'}
+agent {
+lable('node1instance')
+}
 
 tools {
  maven 'maven3.6.2'
