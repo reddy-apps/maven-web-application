@@ -2,7 +2,7 @@ pipeline
 {
 
 agent {
-lable('node1instance')
+label 'node1instance'
 }
 
 tools {
