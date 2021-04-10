@@ -1,7 +1,7 @@
 pipeline
 {
 
-agent node1instance
+agent {'node1instance'}
 
 tools {
  maven 'maven3.6.2'
