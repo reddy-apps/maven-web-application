@@ -35,7 +35,7 @@ stages{
 stage('ExecuteSonarqubeReport')
   {
     steps{
-	sh "mvn sonar:sonar"
+	sh "mvn clean sonar:sonar"
 	}
   }
   
@@ -55,6 +55,7 @@ stage('ExecuteSonarqubeReport')
   }
   
 }
+/*
 post{
    success{
 emailext body: '''Build is over -declarationway
@@ -70,5 +71,7 @@ regards
 --------
 gsreddy''', subject: 'Build is failure -declarationway', to: 'sri.gopireddy46@gmail.com,gsreddymca1986@gmail.com'
    }
-  }
+*/
 }
+}
+
