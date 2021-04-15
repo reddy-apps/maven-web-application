@@ -26,6 +26,7 @@ stage('ExecuteSonarQubeReport')
     sh "scp -o StrictHostKeyChecking=no target/maven-web-application.war ec2-user@52.66.151.4:/opt/tomcat9/webapps/"
 }
 }
+/*
 stage('sendemailnotification')
 {
     emailext body: '''build-over scriptedway
@@ -35,5 +36,5 @@ regards
 gsreddy''', subject: 'build-over scriptedway', to: 'sri.gopireddy46@gmail.com'
 
 }
-    
+*/  
 }
